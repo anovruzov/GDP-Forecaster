@@ -1,2 +1,60 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.svm import SVR
+from sklearn.model_selection import GridSearchCV
+
+class GDPForecast:
+    """
+    A class that forecasts GDP using Support Vector Regression (SVR).
+    Includes data preprocessing, model optimization, training, forecasting, and visualization functionalities.
+    """
+
+    def __init__(self, gdp_data):
+        """
+        Initializes the GDPForecast with historical GDP data.
+        :param gdp_data: A list of GDP values.
+        """
+        self.gdp_data = np.array(gdp_data).reshape(-1, 1)
+        self.years = np.arange(len(gdp_data)).reshape(-1, 1)
+
+    def optimize_model(self):
+        """
+        Optimizes the SVR model using GridSearchCV to find the best hyperparameters.
+        """
+        parameters = {'kernel': ['rbf'], 'C': [1e3, 1e4, 1e5], 'gamma': [0.01, 0.1, 1]}
+        svr = SVR()
+        self.model = GridSearchCV(svr, parameters, cv=5)
+        self.model.fit(self.years, self.gdp_data.ravel())
+        print(f"Optimized parameters: {self.model.best_params_}")
+        print(f"Model score: {self.model.best_score_}")
+
+    def forecast(self, years_ahead=3):
+        """
+        Forecasts GDP for the specified number of years ahead.
+        :param years_ahead: Number of years to forecast.
+        :return: A list of forecasted GDP values.
+        """
+        future_years = np.arange(len(self.gdp_data), len(self.gdp_data) + years_ahead).reshape(-1, 1)
+        return self.model.predict(future_years)
+
+    def plot_forecast(self, forecast):
+        """
+        Plots the historical GDP data along with the forecasted values.
+        :param forecast: A list of forecasted GDP values.
+        """
+        plt.figure(figsize=(10, 6))
+        plt.scatter(self.years, self.gdp_data, color='black', label='Historical GDP')
+        plt.scatter(np.arange(len(self.gdp_data), len(self.gdp_data) + len(forecast)), forecast, color='red', label='Forecasted GDP')
+        plt.xlabel('Years')
+        plt.ylabel('GDP')
+        plt.title('GDP Forecast')
+        plt.legend()
+        plt.show()
+
+# Example usage (with pseudocode for GDP data)
+if __name__ == "__main__":
+    gdp_data = [/* Your GDP data here */]
+    forecaster = GDPForecast(gdp_data)
+    forecaster.optimize_model()
+    future_gdp = forecaster.forecast(years_ahead=3)
+    forecaster.plot_forecast(future_gdp)
