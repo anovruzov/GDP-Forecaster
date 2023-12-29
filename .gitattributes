@@ -1,12 +1,11 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.svm import SVR
 from sklearn.model_selection import GridSearchCV
 
 class GDPForecast:
     """
     A class that forecasts GDP using Support Vector Regression (SVR).
-    Includes data preprocessing, model optimization, training, forecasting, and visualization functionalities.
+    Includes data preprocessing, model optimization, training, and forecasting functionalities.
     """
 
     def __init__(self, gdp_data):
@@ -37,24 +36,11 @@ class GDPForecast:
         future_years = np.arange(len(self.gdp_data), len(self.gdp_data) + years_ahead).reshape(-1, 1)
         return self.model.predict(future_years)
 
-    def plot_forecast(self, forecast):
-        """
-        Plots the historical GDP data along with the forecasted values.
-        :param forecast: A list of forecasted GDP values.
-        """
-        plt.figure(figsize=(10, 6))
-        plt.scatter(self.years, self.gdp_data, color='black', label='Historical GDP')
-        plt.scatter(np.arange(len(self.gdp_data), len(self.gdp_data) + len(forecast)), forecast, color='red', label='Forecasted GDP')
-        plt.xlabel('Years')
-        plt.ylabel('GDP')
-        plt.title('GDP Forecast')
-        plt.legend()
-        plt.show()
-
-# Example usage (with pseudocode for GDP data)
+# Example usage (with placeholder GDP data)
 if __name__ == "__main__":
-    gdp_data = [/* Your GDP data here */]
+    # Placeholder GDP data - replace with your actual GDP data
+    gdp_data = [500, 550, 600, 650, 700, 750, 800, 850, 900, 950] # Replace with actual data
     forecaster = GDPForecast(gdp_data)
     forecaster.optimize_model()
     future_gdp = forecaster.forecast(years_ahead=3)
-    forecaster.plot_forecast(future_gdp)
+    print(f"Forecasted GDP for the next {3} years: {future_gdp}")
